@@ -13,36 +13,36 @@ setwd("~/BINF/others/cilia/results")
 
 #load metadata
 meta <- read_excel("BINF/others/cilia/rna-paper/supplementary tables/table1.xlsx")
-sum(rowSums(is.na(st24mcc)))
+#sum(rowSums(is.na(st24mcc)))
 
+stage = "st22"
 
-
-st24 = meta[meta$Stages == "st24",]
-unique(st24$CellType)
-st24mcc = st24[st24$CellType == "Multiciliated",]
+st = meta[meta$Stages == stage,]
+unique(st$CellType)
+stmcc = st[st$CellType == "Multiciliated",]
 #remove NA rows
-st24mcc = st24mcc[rowSums(is.na(st24mcc)) != ncol(st24mcc), ]
+stmcc = stmcc[rowSums(is.na(stmcc)) != ncol(stmcc), ]
 
 #rename barcode by removing prefix st24_
 
-
-st24mcc = mutate(st24mcc, CellBarcode = sub("^st24_", "", CellBarcode))
+##choose########
+stmcc = mutate(stmcc, CellBarcode = sub("^st22_", "", CellBarcode))
 
 #load custer matric 
 library(readr)
-clusters <- read_csv("~/BINF/others/cilia/rna-paper/GSE158088_RAW/GSM4790543_scCapSt24_count.out/scCapSt24_count/outs/analysis/clustering/graphclust/clusters.csv")
+clusters <- read_csv("~/BINF/others/cilia/rna-paper/GSE158088_RAW_ALL/GSM4790542_scCapSt22_count.v3.out/scCapSt22_count.v3/outs/analysis/clustering/graphclust/clusters.csv")
 #remove -1 in barcode name, which is added by cellranger
 clusters = mutate(clusters, Barcode = sub("-1$","", Barcode))
 
-mcc_clusters = inner_join(st24mcc, clusters, by = c("CellBarcode" = "Barcode"))
-write_xlsx(mcc_clusters, "mcc_clusters24.xlsx")
+mcc_clusters = inner_join(stmcc, clusters, by = c("CellBarcode" = "Barcode"))
+write_xlsx(mcc_clusters, "mcc_clusters22.xlsx")
 
 
 #diffexp
 markers <- read_excel("mcc_markers.xlsx")
-markers = markers[markers$`Cluster 9 Adjusted p value` < 0.05,]
-markersup = markers[markers$`Cluster 9 Log2 fold change` > 0,]
-write_xlsx(markersup,"mccUpGenes_st24.xlsx")
+markers = markers[markers$`Cluster 6 Adjusted p value` < 0.05,]
+markersup = markers[markers$`Cluster 6 Log2 fold change` > 0,]
+write_xlsx(markersup,"mccUpGenes_st22.xlsx")
 
 #############
 #compare proteome and rnaseq data
@@ -86,4 +86,9 @@ joined_per_prot = joined_all_matches %>%
     
   )
 
-write_xlsx(joined_per_prot, "st24_overlap.xlsx")
+write_xlsx(joined_per_prot, "st22_overlap.xlsx")
+
+#for overlap in any stage: copy-pasted, now find uniquw
+overlap_in_any_stage <- read_excel("~/BINF/others/cilia/results/overlap_in_any_stage.xlsx")
+overlap_in_any_stage <- unique(overlap_in_any_stage)
+write_xlsx(overlap_in_any_stage,"overlap_in_any_stage_unique.xlsx")

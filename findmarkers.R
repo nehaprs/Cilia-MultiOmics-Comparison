@@ -28,7 +28,7 @@ stmcc = stmcc[rowSums(is.na(stmcc)) != ncol(stmcc), ]
 ##choose########
 stmcc = mutate(stmcc, CellBarcode = sub("^st22_", "", CellBarcode))
 
-#load custer matric 
+#load cluster matric 
 library(readr)
 clusters <- read_csv("~/BINF/others/cilia/rna-paper/GSE158088_RAW_ALL/GSM4790542_scCapSt22_count.v3.out/scCapSt22_count.v3/outs/analysis/clustering/graphclust/clusters.csv")
 #remove -1 in barcode name, which is added by cellranger
@@ -71,6 +71,8 @@ rna_key = rnaseq %>% mutate(geneKey = str_to_lower(str_trim(Genes.rna)))
 prot_tok = prot %>% mutate(token = str_split(Genes, "\\s*;\\s*")) %>%
   unnest(token) %>%
   mutate(token = str_to_lower(token))
+
+
 
 #inner join
 joined_all_matches = inner_join(prot_tok, rna_key, 

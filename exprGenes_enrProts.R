@@ -134,3 +134,24 @@ write_xlsx(exp_genes,"exp_genes.xlsx")
 
 protlist = as.data.frame(prot_tok$token)
 colnames(protlist) = "name"
+
+################3
+
+#combine all expressed genes
+
+file = "all_expressed_genes.xlsx"
+sheets = excel_sheets(file)
+df <- sheets %>%
+  set_names() %>% 
+  map(~ read_excel(file, sheet = .x))
+s13 = df[[1]][,1]
+s16 = df[[2]][,1]
+s18 = df[[3]][,1]
+s20 = df[[4]][,1]
+s22 = df[[5]][,1]
+s24 = df[[6]][,1]
+s27 = df[[7]][,1]
+
+df = bind_rows(s13, s16, s18, s20, s22, s24, s27)
+df = as.data.frame(unique(df))
+write_xlsx(df, "all_expr_genes1sheet.xlsx")
